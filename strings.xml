@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yes">"Yes"</string>
+    <string name="no">"No"</string>
+    <string name="music">Music</string>
+    <add-resource type="string" name="movie" />
+        <string name="movie">Movie</string>
+    <add-resource type="string" name="voice" />
+        <string name="voice">Voice</string>
+</resources>
