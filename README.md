@@ -73,3 +73,6 @@ Ex:
 
 Ex:  
 `trans_android_str -i "res/values/strings.xml" -o "~/app/res" -c "config.json" -t "translation.txt"`
+
+#### License
+* [MIT License](LICENSE)
