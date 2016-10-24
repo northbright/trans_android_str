@@ -11,12 +11,13 @@ import (
 	"strings"
 )
 
-var string_names []string
-
-var def_string_file string
-var out_res_path string
-var config_file string
-var translation_file string
+var (
+	string_names     []string
+	def_string_file  string
+	out_res_path     string
+	config_file      string
+	translation_file string
+)
 
 type StringInfo struct {
 	IsAddResource   bool
