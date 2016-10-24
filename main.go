@@ -12,13 +12,14 @@ import (
 )
 
 var (
-	string_names     []string
-	def_string_file  string
-	out_res_path     string
-	config_file      string
-	translation_file string
+	stringNames     []string
+	defStringFile   string
+	outResPath      string
+	configFile      string
+	translationFile string
 )
 
+// StringInfo contains infomation for translation use.
 type StringInfo struct {
 	IsAddResource   bool
 	DefaultValue    string
@@ -29,99 +30,99 @@ type StringInfo struct {
 func main() {
 	var err error
 	var buf []byte
-	pattern_string := `<string name="(?P<name>.*)">(?P<value>.*)</string>`
-	pattern_add_string := `<add-resource type="string" name="(?P<name>.*)"`
+	patternString := `<string name="(?P<name>.*)">(?P<value>.*)</string>`
+	patternAddString := `<add-resource type="string" name="(?P<name>.*)"`
 	sep := "\n\n"
 	var stringInfoMap = make(map[string]*StringInfo) // key: string name
-	var string_xml_file_name = ""
+	var stringXMLFileName = ""
 
-	flag.StringVar(&def_string_file, "i", "", "default string file(english). Ex: ./res/values/strings.xml")
-	flag.StringVar(&out_res_path, "o", "", "output resource path. Ex: ./res")
-	flag.StringVar(&config_file, "c", "config.json", "config JSON file contains names of strings need to be translated.")
-	flag.StringVar(&translation_file, "t", "translation.txt", "translation file contains translated strings, iso 639-1 language name and  iso 3166-1 locale name.")
+	flag.StringVar(&defStringFile, "i", "", "default string file(english). Ex: ./res/values/strings.xml")
+	flag.StringVar(&outResPath, "o", "", "output resource path. Ex: ./res")
+	flag.StringVar(&configFile, "c", "config.json", "config JSON file contains names of strings need to be translated.")
+	flag.StringVar(&translationFile, "t", "translation.txt", "translation file contains translated strings, iso 639-1 language name and  iso 3166-1 locale name.")
 
 	flag.Parse()
 
-	fmt.Println("def_string_file: " + def_string_file)
-	fmt.Println("out_res_path: " + out_res_path)
-	fmt.Println("config_file: " + config_file)
-	fmt.Println("translation_file: " + translation_file)
+	fmt.Println("defStringFile: " + defStringFile)
+	fmt.Println("outResPath: " + outResPath)
+	fmt.Println("configFile: " + configFile)
+	fmt.Println("translationFile: " + translationFile)
 
-	if buf, err = ioutil.ReadFile(config_file); err != nil {
+	if buf, err = ioutil.ReadFile(configFile); err != nil {
 		fmt.Println("Read config file err:")
 		fmt.Println(err)
 		return
 	}
 
-	if err = json.Unmarshal(buf, &string_names); err != nil {
+	if err = json.Unmarshal(buf, &stringNames); err != nil {
 		fmt.Println("Parse string names err:")
 		fmt.Println(err)
 		return
 	}
 
 	fmt.Println("String Names:")
-	for _, v := range string_names {
+	for _, v := range stringNames {
 		fmt.Println(v)
 	}
 
-	string_xml_file_name = path.Base(def_string_file)
-	fmt.Printf("xml file name: %s\n", string_xml_file_name)
+	stringXMLFileName = path.Base(defStringFile)
+	fmt.Printf("xml file name: %s\n", stringXMLFileName)
 
-	if buf, err = ioutil.ReadFile(def_string_file); err != nil {
+	if buf, err = ioutil.ReadFile(defStringFile); err != nil {
 		fmt.Println("Read string file err:")
 		fmt.Println(err)
 		return
 	}
 
-	re := regexp.MustCompile(pattern_string)
-	all_strings := re.FindAllStringSubmatch(string(buf), -1)
-	for _, v := range all_strings {
+	re := regexp.MustCompile(patternString)
+	allStrings := re.FindAllStringSubmatch(string(buf), -1)
+	for _, v := range allStrings {
 		info := StringInfo{false, v[2], ""}
 		stringInfoMap[v[1]] = &info
 	}
 
-	re = regexp.MustCompile(pattern_add_string)
-	add_strings := re.FindAllStringSubmatch(string(buf), -1)
-	for _, v := range add_strings {
+	re = regexp.MustCompile(patternAddString)
+	addStrings := re.FindAllStringSubmatch(string(buf), -1)
+	for _, v := range addStrings {
 		if _, ok := stringInfoMap[v[1]]; ok {
 			stringInfoMap[v[1]].IsAddResource = true
 		}
 	}
 
-	if buf, err = ioutil.ReadFile(translation_file); err != nil {
+	if buf, err = ioutil.ReadFile(translationFile); err != nil {
 		fmt.Println("Read translation file err:")
 		fmt.Println(err)
 		return
 	}
 
-	trans_string_collection := strings.Split(string(buf), sep)
-	for _, v := range trans_string_collection {
+	transStringCollection := strings.Split(string(buf), sep)
+	for _, v := range transStringCollection {
 		//fmt.Println(v)
 		//fmt.Println()
 
-		trans_strings := strings.Split(v, "\n")
-		if len(trans_strings) != len(string_names)+1 {
+		transStrings := strings.Split(v, "\n")
+		if len(transStrings) != len(stringNames)+1 {
 			fmt.Println("Translated string count does not match the count of string name in config.json.")
 			return
 		}
 
-		language := trans_strings[0]
+		language := transStrings[0]
 		fmt.Printf("Language: %s\n", language) // 1st string is iso 639-1 language name and iso 3166-1 locale name
 		// mkdir for res/values/xx-xx/ and write string file
-		lang_path := out_res_path + "/values-" + language
-		if err = os.MkdirAll(lang_path, os.ModePerm); err != nil {
+		langPath := outResPath + "/values-" + language
+		if err = os.MkdirAll(langPath, os.ModePerm); err != nil {
 			fmt.Printf("Create out language dir err:%s\n", err)
 			return
 		}
 
-		for i := 1; i < len(trans_strings); i++ {
-			//fmt.Println(trans_strings[i])
-			string_name := string_names[i-1]
-			if _, ok := stringInfoMap[string_name]; !ok {
-				fmt.Printf("string name: %s can not found in default string xml", string_name)
+		for i := 1; i < len(transStrings); i++ {
+			//fmt.Println(transStrings[i])
+			stringName := stringNames[i-1]
+			if _, ok := stringInfoMap[stringName]; !ok {
+				fmt.Printf("string name: %s can not found in default string xml", stringName)
 				return
 			}
-			stringInfoMap[string_name].TranslatedValue = trans_strings[i]
+			stringInfoMap[stringName].TranslatedValue = transStrings[i]
 		}
 
 		body := `<?xml version="1.0" encoding="utf-8"?>` + "\n" + "<resources>\n"
@@ -144,7 +145,7 @@ func main() {
 		body += "</resources>\n"
 		fmt.Println(body)
 
-		file := lang_path + "/" + string_xml_file_name
+		file := langPath + "/" + stringXMLFileName
 		if err = ioutil.WriteFile(file, []byte(body), os.ModePerm); err != nil {
 			fmt.Printf("Write string file err:%s\n", err)
 			return
