@@ -19,7 +19,7 @@ var (
 	translationFile string
 )
 
-// StringInfo contains infomation for translation use.
+// StringInfo contains information for translation use.
 type StringInfo struct {
 	IsAddResource   bool
 	DefaultValue    string
