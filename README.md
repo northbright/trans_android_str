@@ -1,6 +1,7 @@
 # `trans_android_str`
 
 [![Build Status](https://travis-ci.org/northbright/trans_android_str.svg?branch=master)](https://travis-ci.org/northbright/trans_android_str)
+[![Go Report Card](https://goreportcard.com/badge/github.com/northbright/trans_android_str)](https://goreportcard.com/report/github.com/northbright/trans_android_str)
 
 `trans_android_str` is a tool written in [Golang](http://golang.org) which generates translated string xml files under Android app resource path(xx/res/values-xx) by given translated strings and config file.
 
